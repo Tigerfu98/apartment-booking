@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { generateIcsInvite, icsToBase64 } from './calendar';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -6,6 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // To send to guests, add & verify your own domain in Resend and update FROM_EMAIL.
 const FROM_EMAIL = 'Casa STFU <onboarding@resend.dev>';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
+const HOST_EMAILS = ['tigerfu98@gmail.com', 'sarah.chxn@gmail.com'];
 
 function baseTemplate(content: string): string {
   return `
@@ -28,7 +30,8 @@ function baseTemplate(content: string): string {
 </html>`;
 }
 
-interface BookingDetails {
+export interface BookingDetails {
+  bookingId: string;
   guestName: string;
   guestEmail: string;
   numGuests: number;
@@ -119,8 +122,18 @@ export async function sendGuestConfirmationEmail(booking: BookingDetails) {
   }
 }
 
-// 3. Email to guest: booking approved
+// 3. Email to guest: booking approved (with .ics calendar invite attached)
 export async function sendGuestApprovedEmail(booking: BookingDetails) {
+  const icsContent = generateIcsInvite({
+    bookingId: booking.bookingId,
+    guestName: booking.guestName,
+    guestEmail: booking.guestEmail,
+    numGuests: booking.numGuests,
+    checkIn: booking.checkIn,
+    checkOut: booking.checkOut,
+  });
+  const icsBase64 = icsToBase64(icsContent);
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -131,7 +144,7 @@ export async function sendGuestApprovedEmail(booking: BookingDetails) {
           You&rsquo;re All Set! &#127881;
         </h2>
         <p style="color:#7D7166;font-size:14px;line-height:1.6;margin:0 0 20px;">
-          Hi ${booking.guestName}, great news &mdash; your stay has been approved!
+          Hi ${booking.guestName}, great news &mdash; your stay has been approved! A calendar invite is attached.
         </p>
         <div style="background:#FAF9F7;border-radius:8px;padding:16px;font-size:14px;color:#5E544A;">
           <p style="margin:0 0 4px;"><strong>Check-in:</strong> ${booking.checkIn}</p>
@@ -149,6 +162,13 @@ export async function sendGuestApprovedEmail(booking: BookingDetails) {
           The apartment is located at <strong>1550 Mission St, Apt 1903, San Francisco, CA 94103</strong>. We look forward to hosting you!
         </p>
       `),
+      attachments: [
+        {
+          filename: 'casa-stfu-booking.ics',
+          content: icsBase64,
+          contentType: 'text/calendar; method=REQUEST',
+        },
+      ],
     });
   } catch (error) {
     console.error('Failed to send guest approved email:', error);
@@ -186,5 +206,61 @@ export async function sendGuestRejectedEmail(booking: BookingDetails) {
     });
   } catch (error) {
     console.error('Failed to send guest rejected email:', error);
+  }
+}
+
+// 5. Email .ics calendar invite to hosts so it appears on their calendars
+export async function sendHostCalendarInvite(booking: BookingDetails, isCancellation: boolean = false) {
+  const icsContent = generateIcsInvite({
+    bookingId: booking.bookingId,
+    guestName: booking.guestName,
+    guestEmail: booking.guestEmail,
+    numGuests: booking.numGuests,
+    checkIn: booking.checkIn,
+    checkOut: booking.checkOut,
+    isCancellation,
+  });
+  const icsBase64 = icsToBase64(icsContent);
+
+  const subject = isCancellation
+    ? `Cancelled: Casa STFU — ${booking.guestName} (${booking.checkIn} → ${booking.checkOut})`
+    : `Casa STFU: ${booking.guestName} (${booking.checkIn} → ${booking.checkOut})`;
+
+  const bodyText = isCancellation
+    ? `The booking for ${booking.guestName} (${booking.checkIn} → ${booking.checkOut}) has been cancelled. The attached calendar invite will remove the event from your calendar.`
+    : `A new booking has been confirmed for ${booking.guestName} (${booking.numGuests} guest${booking.numGuests !== 1 ? 's' : ''}). The attached calendar invite will add it to your calendar.`;
+
+  const method = isCancellation ? 'CANCEL' : 'REQUEST';
+
+  for (const hostEmail of HOST_EMAILS) {
+    try {
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: hostEmail,
+        subject,
+        html: baseTemplate(`
+          <h2 style="margin:0 0 8px;color:#3E372F;font-size:20px;font-weight:500;">
+            ${isCancellation ? 'Booking Cancelled' : 'New Confirmed Booking'}
+          </h2>
+          <p style="color:#7D7166;font-size:14px;line-height:1.6;margin:0 0 20px;">
+            ${bodyText}
+          </p>
+          <div style="background:#FAF9F7;border-radius:8px;padding:16px;font-size:14px;color:#5E544A;">
+            <p style="margin:0 0 4px;"><strong>Guest:</strong> ${booking.guestName}</p>
+            <p style="margin:0 0 4px;"><strong>Dates:</strong> ${booking.checkIn} &rarr; ${booking.checkOut}</p>
+            <p style="margin:0;"><strong>Guests:</strong> ${booking.numGuests}</p>
+          </div>
+        `),
+        attachments: [
+          {
+            filename: isCancellation ? 'casa-stfu-cancellation.ics' : 'casa-stfu-booking.ics',
+            content: icsBase64,
+            contentType: `text/calendar; method=${method}`,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error(`Failed to send host calendar invite to ${hostEmail}:`, error);
+    }
   }
 }

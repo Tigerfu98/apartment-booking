@@ -196,9 +196,19 @@ export default function BookingList({
                   </div>
                 )}
 
-                {/* Remove button for approved bookings */}
+                {/* Cancel & Remove buttons for approved bookings */}
                 {booking.status === "approved" && (
-                  <div className="shrink-0">
+                  <div className="flex flex-col gap-2 shrink-0">
+                    <button
+                      onClick={() => {
+                        if (!confirm("Cancel this booking? A cancellation email with calendar update will be sent to the guest and hosts.")) return;
+                        handleAction(booking.id, "rejected");
+                      }}
+                      disabled={actionLoading === booking.id}
+                      className="px-3 py-1.5 text-xs font-medium text-orange-600 border border-orange-200 rounded-lg hover:bg-orange-50 transition-colors disabled:opacity-50"
+                    >
+                      {actionLoading === booking.id ? "Cancelling..." : "Cancel Booking"}
+                    </button>
                     <button
                       onClick={() => handleDelete(booking.id)}
                       disabled={actionLoading === booking.id}

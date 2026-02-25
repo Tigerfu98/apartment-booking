@@ -129,6 +129,7 @@ export async function POST(request: NextRequest) {
 
     // Send email notifications (don't block the response)
     const emailDetails = {
+      bookingId: newBooking.id,
       guestName: guest_name,
       guestEmail: guest_email,
       numGuests: num_guests,

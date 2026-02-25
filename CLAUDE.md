@@ -7,7 +7,7 @@ Private booking tool for a single SF apartment. Friends & family view availabili
 - Tailwind CSS for styling
 - react-day-picker for calendar
 - Resend for transactional email
-- Google Calendar API for sync
+- .ics calendar invites (generated in code, no external API)
 - Deployed on Vercel
 ## Commands
 - `npm run dev` — local dev server
@@ -19,7 +19,7 @@ Private booking tool for a single SF apartment. Friends & family view availabili
 - Use Server Components by default, Client Components only when needed (interactivity)
 - Use Server Actions for mutations
 - Keep components in `/src/components/`, pages in `/src/app/`
-- Use environment variables for all secrets (DATABASE_URL, Resend API key, admin password, Google Calendar credentials)
+- Use environment variables for all secrets (DATABASE_URL, Resend API key, admin password)
 - Write Zod schemas for all form validation
 - Commit after completing each milestone with descriptive messages
 ## Design Guidelines
