@@ -2,8 +2,38 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { bookings, blackoutDates } from '@/lib/db/schema';
 import { bookingRequestSchema } from '@/lib/validations/booking';
-import { and, eq, gte, lte, or } from 'drizzle-orm';
+import { and, eq, gte, lte, or, desc } from 'drizzle-orm';
 import { addDays, format } from 'date-fns';
+import { verifyAdminFromRequest } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: NextRequest) {
+  if (!verifyAdminFromRequest(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const db = getDb();
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+
+    const validStatuses = ['pending', 'approved', 'rejected'] as const;
+    const isValidStatus = (s: string): s is typeof validStatuses[number] =>
+      validStatuses.includes(s as typeof validStatuses[number]);
+
+    const results = status && isValidStatus(status)
+      ? await db.select().from(bookings).where(eq(bookings.status, status)).orderBy(desc(bookings.createdAt))
+      : await db.select().from(bookings).orderBy(desc(bookings.createdAt));
+    return NextResponse.json({ bookings: results });
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch bookings' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

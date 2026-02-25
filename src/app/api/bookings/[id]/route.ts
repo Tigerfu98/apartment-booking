@@ -1,0 +1,71 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getDb } from '@/lib/db';
+import { bookings } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { verifyAdminFromRequest } from '@/lib/auth';
+import { z } from 'zod';
+
+const updateBookingSchema = z.object({
+  status: z.enum(['approved', 'rejected']),
+  admin_message: z.string().optional(),
+});
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!verifyAdminFromRequest(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { id } = await params;
+    const body = await request.json();
+
+    const result = updateBookingSchema.safeParse(body);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: result.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+
+    const { status, admin_message } = result.data;
+    const db = getDb();
+
+    // Verify booking exists and is pending
+    const [existing] = await db
+      .select({ id: bookings.id, status: bookings.status })
+      .from(bookings)
+      .where(eq(bookings.id, id));
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
+    if (existing.status !== 'pending') {
+      return NextResponse.json(
+        { error: `Booking is already ${existing.status}` },
+        { status: 409 }
+      );
+    }
+
+    const [updated] = await db
+      .update(bookings)
+      .set({
+        status,
+        adminMessage: admin_message || null,
+        updatedAt: new Date(),
+      })
+      .where(eq(bookings.id, id))
+      .returning();
+
+    return NextResponse.json({ booking: updated });
+  } catch (error) {
+    console.error('Error updating booking:', error);
+    return NextResponse.json(
+      { error: 'Failed to update booking' },
+      { status: 500 }
+    );
+  }
+}
