@@ -114,7 +114,7 @@ export default function BookingForm({ dateRange }: BookingFormProps) {
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-2 border border-warm-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors"
+          className="w-full px-3 py-2 border border-warm-gray-300 rounded-lg text-sm bg-white/80 focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors"
           placeholder="Your name"
         />
         {errors.guest_name && (
@@ -131,7 +131,7 @@ export default function BookingForm({ dateRange }: BookingFormProps) {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full px-3 py-2 border border-warm-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors"
+          className="w-full px-3 py-2 border border-warm-gray-300 rounded-lg text-sm bg-white/80 focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors"
           placeholder="you@example.com"
         />
         {errors.guest_email && (
@@ -150,7 +150,7 @@ export default function BookingForm({ dateRange }: BookingFormProps) {
           max={10}
           value={numGuests}
           onChange={(e) => setNumGuests(parseInt(e.target.value) || 1)}
-          className="w-full px-3 py-2 border border-warm-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors"
+          className="w-full px-3 py-2 border border-warm-gray-300 rounded-lg text-sm bg-white/80 focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors"
         />
         {errors.num_guests && (
           <p className="mt-1 text-xs text-red-500">{errors.num_guests[0]}</p>
@@ -166,7 +166,7 @@ export default function BookingForm({ dateRange }: BookingFormProps) {
           rows={3}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full px-3 py-2 border border-warm-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors resize-none"
+          className="w-full px-3 py-2 border border-warm-gray-300 rounded-lg text-sm bg-white/80 focus:outline-none focus:ring-2 focus:ring-slate-blue/30 focus:border-slate-blue transition-colors resize-none"
           placeholder="Anything we should know about your stay?"
         />
       </div>
@@ -180,7 +180,7 @@ export default function BookingForm({ dateRange }: BookingFormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-3 bg-slate-blue text-white text-sm font-medium rounded-lg hover:bg-slate-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 bg-slate-blue text-white text-sm font-semibold rounded-lg shadow-lg hover:bg-slate-blue-dark hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {submitting ? "Submitting..." : "Request to Book"}
       </button>

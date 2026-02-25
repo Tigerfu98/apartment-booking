@@ -5,14 +5,14 @@ export default function Location() {
   return (
     <section className="py-20 px-4">
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-light text-center text-warm-gray-800 mb-2">
+        <h2 className="text-3xl font-semibold text-center text-white mb-2 text-shadow-subtle">
           Location
         </h2>
-        <p className="text-center text-warm-gray-500 mb-10 font-light">
+        <p className="text-center text-white/80 mb-10 font-light text-shadow-subtle">
           {address}
         </p>
 
-        <div className="rounded-2xl overflow-hidden shadow-sm border border-warm-gray-200">
+        <div className="glass-card rounded-2xl overflow-hidden p-2">
           <iframe
             src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${mapsQuery}`}
             width="100%"
@@ -22,6 +22,7 @@ export default function Location() {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Apartment location"
+            className="rounded-xl"
           />
         </div>
 
@@ -30,7 +31,7 @@ export default function Location() {
             href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-slate-blue hover:text-slate-blue-dark transition-colors underline underline-offset-2"
+            className="text-sm text-white/90 hover:text-white transition-colors underline underline-offset-2 text-shadow-subtle"
           >
             Open in Google Maps
           </a>

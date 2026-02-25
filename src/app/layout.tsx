@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: "Casa STFU | Book Your Stay in San Francisco",
   description:
     "Check availability and request a stay at Casa STFU — Tiger & Sarah's apartment in the heart of San Francisco.",
+  icons: {
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐯</text></svg>",
+  },
   openGraph: {
     title: "Casa STFU | Book Your Stay",
     description:

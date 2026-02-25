@@ -107,8 +107,8 @@ export default function AvailabilityCalendar({ onRangeSelect }: AvailabilityCale
             classNames={{
               root: "rdp-root mx-auto",
               months: "flex flex-col sm:flex-row gap-4",
-              month_caption: "text-warm-gray-700 font-medium text-sm mb-2",
-              weekday: "text-warm-gray-400 text-xs font-normal w-10 h-8",
+              month_caption: "text-warm-gray-800 font-semibold text-sm mb-2",
+              weekday: "text-warm-gray-500 text-xs font-medium w-10 h-8",
               day: "w-10 h-10 text-sm rounded-lg",
               day_button: "w-10 h-10 rounded-lg hover:bg-warm-gray-100 transition-colors",
               selected: "bg-slate-blue text-white hover:bg-slate-blue-dark",

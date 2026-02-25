@@ -43,18 +43,18 @@ const categories = [
 
 export default function AreaGuide() {
   return (
-    <section className="py-20 px-4 bg-warm-gray-100">
+    <section className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-light text-center text-warm-gray-800 mb-2">
+        <h2 className="text-3xl font-semibold text-center text-white mb-2 text-shadow-subtle">
           Local Area Guide
         </h2>
-        <p className="text-center text-warm-gray-500 mb-12 font-light">
+        <p className="text-center text-white/80 mb-12 font-light text-shadow-subtle">
           Our favorite spots around the neighborhood
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
-            <div key={category.title}>
+            <div key={category.title} className="glass-card rounded-2xl p-6">
               <h3 className="text-lg font-medium text-warm-gray-800 mb-4 flex items-center gap-2">
                 <span>{category.icon}</span>
                 {category.title}

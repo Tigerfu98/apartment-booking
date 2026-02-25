@@ -19,9 +19,41 @@
 }
 
 body {
-  background: var(--color-warm-gray-50);
+  background: transparent;
   color: var(--color-warm-gray-900);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Glassmorphism utility classes */
+.glass-card {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.glass-card-strong {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.glass-card-dark {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.text-shadow-hero {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-subtle {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* react-day-picker overrides */
