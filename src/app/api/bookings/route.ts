@@ -5,6 +5,7 @@ import { bookingRequestSchema } from '@/lib/validations/booking';
 import { and, eq, gte, lte, or, desc } from 'drizzle-orm';
 import { addDays, format } from 'date-fns';
 import { verifyAdminFromRequest } from '@/lib/auth';
+import { sendAdminNewRequestEmail, sendGuestConfirmationEmail } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -125,6 +126,19 @@ export async function POST(request: NextRequest) {
         message: message || null,
       })
       .returning({ id: bookings.id, status: bookings.status });
+
+    // Send email notifications (don't block the response)
+    const emailDetails = {
+      guestName: guest_name,
+      guestEmail: guest_email,
+      numGuests: num_guests,
+      checkIn: check_in,
+      checkOut: check_out,
+      message: message || null,
+    };
+
+    sendAdminNewRequestEmail(emailDetails).catch(() => {});
+    sendGuestConfirmationEmail(emailDetails).catch(() => {});
 
     return NextResponse.json(
       {

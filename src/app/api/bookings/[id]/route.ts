@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { bookings } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { verifyAdminFromRequest } from '@/lib/auth';
+import { sendGuestApprovedEmail, sendGuestRejectedEmail } from '@/lib/email';
 import { z } from 'zod';
 
 const updateBookingSchema = z.object({
@@ -59,6 +60,22 @@ export async function PATCH(
       })
       .where(eq(bookings.id, id))
       .returning();
+
+    // Send email notification to guest (don't block the response)
+    const emailDetails = {
+      guestName: updated.guestName,
+      guestEmail: updated.guestEmail,
+      numGuests: updated.numGuests,
+      checkIn: updated.checkIn,
+      checkOut: updated.checkOut,
+      adminMessage: updated.adminMessage,
+    };
+
+    if (status === 'approved') {
+      sendGuestApprovedEmail(emailDetails).catch(() => {});
+    } else {
+      sendGuestRejectedEmail(emailDetails).catch(() => {});
+    }
 
     return NextResponse.json({ booking: updated });
   } catch (error) {
