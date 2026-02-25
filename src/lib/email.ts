@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { generateIcsInvite, icsToBase64 } from './calendar';
+import { generateApprovalToken } from './email-token';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -48,6 +49,12 @@ export async function sendAdminNewRequestEmail(booking: BookingDetails) {
     return;
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const approveToken = generateApprovalToken(booking.bookingId, 'approve');
+  const rejectToken = generateApprovalToken(booking.bookingId, 'reject');
+  const approveUrl = `${baseUrl}/api/bookings/${booking.bookingId}/action?token=${approveToken}`;
+  const rejectUrl = `${baseUrl}/api/bookings/${booking.bookingId}/action?token=${rejectToken}`;
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
@@ -81,10 +88,20 @@ export async function sendAdminNewRequestEmail(booking: BookingDetails) {
           </tr>
           ` : ''}
         </table>
-        <p style="margin:24px 0 0;text-align:center;">
-          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/admin"
-             style="display:inline-block;padding:10px 24px;background:#6B7FA3;color:#ffffff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:500;">
-            Review in Dashboard
+        <div style="margin:24px 0 0;text-align:center;">
+          <a href="${approveUrl}"
+             style="display:inline-block;padding:10px 28px;background:#16a34a;color:#ffffff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:500;margin-right:8px;">
+            Approve
+          </a>
+          <a href="${rejectUrl}"
+             style="display:inline-block;padding:10px 28px;background:#dc2626;color:#ffffff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:500;">
+            Reject
+          </a>
+        </div>
+        <p style="margin:16px 0 0;text-align:center;">
+          <a href="${baseUrl}/admin"
+             style="color:#9A8F80;font-size:12px;text-decoration:underline;">
+            or open dashboard
           </a>
         </p>
       `),
