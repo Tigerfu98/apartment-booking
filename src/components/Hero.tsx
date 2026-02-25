@@ -15,11 +15,11 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-2xl">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4 tracking-tight">
-          Stay in San Francisco
+          Book a stay at Casa STFU
         </h1>
         <p className="text-lg md:text-xl text-white/90 font-light leading-relaxed">
-          Welcome! Check availability and request your stay at Tiger&apos;s
-          apartment in the heart of SF.
+          Welcome! Check availability and request your stay at Tiger &amp;
+          Sarah&apos;s apartment in the heart of SF.
         </p>
         <a
           href="#calendar"
