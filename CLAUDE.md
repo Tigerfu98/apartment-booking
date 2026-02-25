@@ -3,7 +3,7 @@
 Private booking tool for a single SF apartment. Friends & family view availability and request stays. Admin (single user) approves/rejects via dashboard.
 ## Tech Stack
 - Next.js 14+ (App Router) with TypeScript
-- Supabase (PostgreSQL) for database
+- Neon (PostgreSQL) + Drizzle ORM for database
 - Tailwind CSS for styling
 - react-day-picker for calendar
 - Resend for transactional email
@@ -13,13 +13,13 @@ Private booking tool for a single SF apartment. Friends & family view availabili
 - `npm run dev` — local dev server
 - `npm run build` — production build
 - `npm run lint` — ESLint
-- `npx supabase db push` — push schema to Supabase
+- `npx drizzle-kit push` — push schema to Neon
 ## Code Conventions
 - Use TypeScript strict mode
 - Use Server Components by default, Client Components only when needed (interactivity)
 - Use Server Actions for mutations
 - Keep components in `/src/components/`, pages in `/src/app/`
-- Use environment variables for all secrets (Supabase URL/key, Resend API key, admin password, Google Calendar credentials)
+- Use environment variables for all secrets (DATABASE_URL, Resend API key, admin password, Google Calendar credentials)
 - Write Zod schemas for all form validation
 - Commit after completing each milestone with descriptive messages
 ## Design Guidelines
