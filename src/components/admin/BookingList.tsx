@@ -63,6 +63,22 @@ export default function BookingList({
     }
   }
 
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to remove this booking?")) return;
+    setActionLoading(id);
+    try {
+      const res = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchBookings();
+        onAction?.();
+      }
+    } catch {
+      console.error("Failed to delete booking");
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
       pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -177,6 +193,19 @@ export default function BookingList({
                         Reject
                       </button>
                     </div>
+                  </div>
+                )}
+
+                {/* Remove button for approved bookings */}
+                {booking.status === "approved" && (
+                  <div className="shrink-0">
+                    <button
+                      onClick={() => handleDelete(booking.id)}
+                      disabled={actionLoading === booking.id}
+                      className="px-3 py-1.5 text-xs font-medium text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+                    >
+                      {actionLoading === booking.id ? "Removing..." : "Remove"}
+                    </button>
                   </div>
                 )}
               </div>

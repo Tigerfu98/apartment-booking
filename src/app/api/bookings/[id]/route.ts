@@ -69,3 +69,34 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!verifyAdminFromRequest(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { id } = await params;
+    const db = getDb();
+
+    const [deleted] = await db
+      .delete(bookings)
+      .where(eq(bookings.id, id))
+      .returning({ id: bookings.id });
+
+    if (!deleted) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting booking:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete booking' },
+      { status: 500 }
+    );
+  }
+}
