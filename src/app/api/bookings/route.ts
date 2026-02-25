@@ -137,8 +137,8 @@ export async function POST(request: NextRequest) {
       message: message || null,
     };
 
-    sendAdminNewRequestEmail(emailDetails).catch(() => {});
-    sendGuestConfirmationEmail(emailDetails).catch(() => {});
+    sendAdminNewRequestEmail(emailDetails).catch((err) => console.error('Admin email failed:', err));
+    sendGuestConfirmationEmail(emailDetails).catch((err) => console.error('Guest confirmation email failed:', err));
 
     return NextResponse.json(
       {

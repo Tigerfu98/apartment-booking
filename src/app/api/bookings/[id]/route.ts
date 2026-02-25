@@ -72,9 +72,9 @@ export async function PATCH(
     };
 
     if (status === 'approved') {
-      sendGuestApprovedEmail(emailDetails).catch(() => {});
+      sendGuestApprovedEmail(emailDetails).catch((err) => console.error('Guest approved email failed:', err));
     } else {
-      sendGuestRejectedEmail(emailDetails).catch(() => {});
+      sendGuestRejectedEmail(emailDetails).catch((err) => console.error('Guest rejected email failed:', err));
     }
 
     return NextResponse.json({ booking: updated });

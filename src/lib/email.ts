@@ -2,6 +2,8 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Resend sandbox (onboarding@resend.dev) can ONLY send to the account owner's email.
+// To send to guests, add & verify your own domain in Resend and update FROM_EMAIL.
 const FROM_EMAIL = 'Casa STFU <onboarding@resend.dev>';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || '';
 
