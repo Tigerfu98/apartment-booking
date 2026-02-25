@@ -6,9 +6,22 @@ import "react-day-picker/style.css";
 import { parseISO, addDays } from "date-fns";
 import type { Booking } from "@/lib/db/schema";
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
+
 export default function AdminCalendarView() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     async function fetchBookings() {
@@ -17,9 +30,11 @@ export default function AdminCalendarView() {
         if (res.ok) {
           const data = await res.json();
           setBookings(data.bookings);
+        } else {
+          setError("Failed to load bookings");
         }
       } catch {
-        console.error("Failed to fetch bookings");
+        setError("Network error. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -43,12 +58,18 @@ export default function AdminCalendarView() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-12 text-red-500">{error}</div>
+    );
+  }
+
   return (
     <div>
-      <div className="bg-white rounded-xl border border-warm-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-warm-gray-200 p-4 sm:p-6">
         <DayPicker
           mode="multiple"
-          numberOfMonths={3}
+          numberOfMonths={isMobile ? 1 : 3}
           fromDate={today}
           toDate={addDays(today, 180)}
           className="mx-auto"
@@ -104,7 +125,7 @@ export default function AdminCalendarView() {
               .map((booking) => (
                 <div
                   key={booking.id}
-                  className="bg-white rounded-lg border border-warm-gray-200 px-4 py-3 flex items-center justify-between"
+                  className="bg-white rounded-lg border border-warm-gray-200 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1"
                 >
                   <div>
                     <span className="font-medium text-sm text-warm-gray-800">

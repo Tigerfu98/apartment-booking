@@ -13,9 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tiger's SF Apartment | Book Your Stay",
+  title: "Casa STFU | Book Your Stay in San Francisco",
   description:
-    "Check availability and request a stay at Tiger's apartment in San Francisco.",
+    "Check availability and request a stay at Casa STFU — Tiger & Sarah's apartment in the heart of San Francisco.",
+  openGraph: {
+    title: "Casa STFU | Book Your Stay",
+    description:
+      "Check availability and request a stay at Casa STFU in San Francisco.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

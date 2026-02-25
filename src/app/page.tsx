@@ -12,7 +12,7 @@ export default function Home() {
       <AreaGuide />
 
       <footer className="py-8 text-center text-xs text-warm-gray-400">
-        <p>&copy; {new Date().getFullYear()} Tiger&apos;s SF Apartment</p>
+        <p>&copy; {new Date().getFullYear()} Casa STFU</p>
       </footer>
     </main>
   );
